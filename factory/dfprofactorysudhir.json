@@ -1,0 +1,9 @@
+{
+	"name": "dfprofactorysudhir",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "d214f52b-4258-4a39-b792-eb8395d31f58",
+		"tenantId": "a83fa001-20fd-40a1-b5e7-9bb395f94446"
+	}
+}
