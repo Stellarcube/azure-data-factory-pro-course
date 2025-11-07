@@ -30,18 +30,6 @@
 		"LS_sqldb_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "sudhiradmin"
-		},
-		"cdctrigger_properties_IngestionPipeline_parameters_schema": {
-			"type": "string",
-			"defaultValue": "source"
-		},
-		"cdctrigger_properties_IngestionPipeline_parameters_table": {
-			"type": "string",
-			"defaultValue": "Orders"
-		},
-		"cdctrigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/5505507c-65c1-48fd-ba89-47f7b7391dae/resourceGroups/RG-ADFPro/providers/Microsoft.Storage/storageAccounts/dfprostoragesudhir"
 		}
 	},
 	"variables": {
@@ -114,7 +102,7 @@
 								{
 									"type": "Query",
 									"text": {
-										"value": "select count(*) as total_count \nfrom @{pipeline().parameters.schema}.@{pipeline().parameters.table}\nwhere \nlast_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'",
+										"value": "select count(*) as total_count \nfrom @{pipeline().parameters.schema}.@{pipeline().parameters.table}\nwhere \nlast_updated > '@{if(empty(pipeline().parameters.backdate), activity('last_cdc').output.value[0].cdc_timestamp, pipeline().parameters.backdate)}'",
 										"type": "Expression"
 									}
 								}
@@ -156,7 +144,7 @@
 										"source": {
 											"type": "AzureSqlSource",
 											"sqlReaderQuery": {
-												"value": "select * from \n@{pipeline().parameters.schema}.@{pipeline().parameters.table}\nwhere \nlast_updated > '@{activity('last_cdc').output.value[0].cdc_timestamp}'",
+												"value": "select * from \n@{pipeline().parameters.schema}.@{pipeline().parameters.table}\nwhere \nlast_updated > '@{if(empty(pipeline().parameters.backdate), activity('last_cdc').output.value[0].cdc_timestamp, pipeline().parameters.backdate)}'",
 												"type": "Expression"
 											},
 											"queryTimeout": "02:00:00",
@@ -313,6 +301,10 @@
 					"table": {
 						"type": "string",
 						"defaultValue": "Orders"
+					},
+					"backdate": {
+						"type": "string",
+						"defaultValue": "2025-09-24"
 					}
 				},
 				"annotations": []
@@ -456,39 +448,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/cdctrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "IngestionPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"schema": "[parameters('cdctrigger_properties_IngestionPipeline_parameters_schema')]",
-							"table": "[parameters('cdctrigger_properties_IngestionPipeline_parameters_table')]"
-						}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/source/blobs/monitor/cdc.json",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('cdctrigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/IngestionPipeline')]"
-			]
 		}
 	]
 }
