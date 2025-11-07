@@ -1,0 +1,28 @@
+{
+	"name": "cdctrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "IngestionPipeline",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"schema": "source",
+					"table": "Orders"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/source/blobs/monitor/cdc.json",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/5505507c-65c1-48fd-ba89-47f7b7391dae/resourceGroups/RG-ADFPro/providers/Microsoft.Storage/storageAccounts/dfprostoragesudhir",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}
