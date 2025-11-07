@@ -23,6 +23,15 @@
 		"LS_sqldb_properties_typeProperties_userName": {
 			"value": "sudhiradmin"
 		},
+		"cdctrigger_properties_IngestionPipeline_parameters_schema": {
+			"value": "source"
+		},
+		"cdctrigger_properties_IngestionPipeline_parameters_table": {
+			"value": "Orders"
+		},
+		"cdctrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/5505507c-65c1-48fd-ba89-47f7b7391dae/resourceGroups/RG-ADFPro/providers/Microsoft.Storage/storageAccounts/dfprostoragesudhir"
+		},
 		"containerUri": {
 			"value": ""
 		},
